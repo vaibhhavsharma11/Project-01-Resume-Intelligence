@@ -1,0 +1,15 @@
+[project]
+name = "project-01-resume-intelligence"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.141.1",
+    "jinja2>=3.1.6",
+    "openai>=2.53.0",
+    "pydantic-settings>=2.14.2",
+    "pypdf>=6.14.2",
+    "python-dotenv>=1.2.2",
+    "python-multipart>=0.0.32",
+    "rich>=15.0.0",
+    "uvicorn>=0.52.1",
+]

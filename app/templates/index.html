@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Enterprise Resume Intelligence</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Enterprise Resume Intelligence</h1>
+
+        <p class="subtitle">
+            AI-powered ATS analysis for modern resumes.
+        </p>
+
+        <form
+                action="/resume/upload"
+                method="post"
+                enctype="multipart/form-data">
+
+            <input
+                    type="file"
+                    name="file"
+                    accept=".pdf"
+                    required>
+
+            <button type="submit">
+                Analyze Resume
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

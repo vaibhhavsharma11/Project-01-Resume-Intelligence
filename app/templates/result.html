@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Analysis Result</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Resume Analysis</h1>
+
+        <p>
+            <strong>Filename:</strong>
+            {{ filename }}
+        </p>
+
+        <p>
+            <strong>Characters:</strong>
+            {{ characters }}
+        </p>
+
+        <hr>
+
+        <h2>ATS Score</h2>
+
+        <div class="score">
+
+            {{ analysis.ats_score }}/100
+
+        </div>
+
+        <h2>Professional Summary</h2>
+
+        <p>{{ analysis.summary }}</p>
+
+        <h2>Skills</h2>
+
+        <ul>
+
+            {% for skill in analysis.skills %}
+
+            <li>{{ skill }}</li>
+
+            {% endfor %}
+
+        </ul>
+
+        <h2>Strengths</h2>
+
+        <ul>
+
+            {% for item in analysis.strengths %}
+
+            <li>{{ item }}</li>
+
+            {% endfor %}
+
+        </ul>
+
+        <h2>Weaknesses</h2>
+
+        <ul>
+
+            {% for item in analysis.weaknesses %}
+
+            <li>{{ item }}</li>
+
+            {% endfor %}
+
+        </ul>
+
+        <h2>Recommendations</h2>
+
+        <ul>
+
+            {% for item in analysis.recommendations %}
+
+            <li>{{ item }}</li>
+
+            {% endfor %}
+
+        </ul>
+
+        <a href="/">
+            Analyze Another Resume
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

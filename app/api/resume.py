@@ -1,48 +1,66 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pypdf import PdfReader
 
 from app.services.ai_service import analyze_resume
 
-router = APIRouter(prefix="/resume", tags=["Resume"])
+router = APIRouter()
+
+templates = Jinja2Templates(directory="app/templates")
 
 
-@router.post("/upload")
-async def upload_resume(file: UploadFile = File(...)):
+@router.post("/resume/upload", response_class=HTMLResponse)
+async def upload_resume(
+    request: Request,
+    file: UploadFile = File(...),
+):
+
+    if not file.filename:
+        raise HTTPException(
+            status_code=400,
+            detail="No file uploaded.",
+        )
 
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(
             status_code=400,
-            detail="Only PDF files are supported."
+            detail="Only PDF files are supported.",
         )
 
     try:
 
         reader = PdfReader(file.file)
 
-        text = ""
+        resume_text = ""
 
         for page in reader.pages:
+
             page_text = page.extract_text()
 
             if page_text:
-                text += page_text + "\n"
+                resume_text += page_text + "\n"
 
-        if len(text.strip()) == 0:
+        if not resume_text.strip():
             raise HTTPException(
                 status_code=400,
-                detail="No readable text found inside PDF."
+                detail="Unable to extract text from PDF.",
             )
 
-        analysis = analyze_resume(text)
+        analysis = analyze_resume(resume_text)
 
-        return {
-            "filename": file.filename,
-            "characters": len(text),
-            "analysis": analysis
-        }
+        return templates.TemplateResponse(
+            request=request,
+            name="result.html",
+            context={
+                "filename": file.filename,
+                "characters": len(resume_text),
+                "analysis": analysis,
+            },
+        )
 
     except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=str(e)
+            detail=str(e),
         )

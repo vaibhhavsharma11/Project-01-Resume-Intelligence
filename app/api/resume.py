@@ -13,19 +13,19 @@ templates = Jinja2Templates(directory="app/templates")
 @router.post("/resume/upload", response_class=HTMLResponse)
 async def upload_resume(
     request: Request,
-    file: UploadFile = File(...),
+    file: UploadFile = File(...)
 ):
 
     if not file.filename:
         raise HTTPException(
             status_code=400,
-            detail="No file uploaded.",
+            detail="No file uploaded."
         )
 
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(
             status_code=400,
-            detail="Only PDF files are supported.",
+            detail="Only PDF files are supported."
         )
 
     try:
@@ -44,7 +44,7 @@ async def upload_resume(
         if not resume_text.strip():
             raise HTTPException(
                 status_code=400,
-                detail="Unable to extract text from PDF.",
+                detail="Unable to extract text from the uploaded PDF."
             )
 
         analysis = analyze_resume(resume_text)
@@ -53,14 +53,13 @@ async def upload_resume(
             request=request,
             name="result.html",
             context={
-                "filename": file.filename,
-                "characters": len(resume_text),
-                "analysis": analysis,
-            },
+                "analysis": analysis
+            }
         )
 
     except Exception as e:
+
         raise HTTPException(
             status_code=500,
-            detail=str(e),
+            detail=str(e)
         )

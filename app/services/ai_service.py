@@ -1,69 +1,128 @@
-from typing import Dict, List
+import re
+
+from app.models.resume import Candidate, ResumeAnalysis
 
 
-class MockAIProvider:
-    """
-    Temporary AI provider.
+EMAIL_REGEX = r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+"
 
-    Later this will be replaced with:
-    - OpenAI
-    - Azure OpenAI
-    - Claude
-    - Gemini
-    - Ollama
-
-    without changing any API code.
-    """
-
-    def analyze_resume(self, resume_text: str) -> Dict:
-
-        word_count = len(resume_text.split())
-
-        score = min(95, max(65, word_count // 8))
-
-        return {
-            "ats_score": score,
-
-            "summary": (
-                "Experienced professional with a strong enterprise background "
-                "transitioning into Applied AI Engineering."
-            ),
-
-            "skills": [
-                "Python",
-                "FastAPI",
-                "SQL",
-                "AWS",
-                "Problem Solving",
-                "Data Engineering"
-            ],
-
-            "strengths": [
-                "Strong enterprise experience",
-                "Cloud knowledge",
-                "Consulting background",
-                "Structured resume"
-            ],
-
-            "weaknesses": [
-                "Need more visible AI projects",
-                "Could improve LLM experience",
-                "Add production deployments"
-            ],
-
-            "recommendations": [
-                "Highlight AI projects at the top",
-                "Quantify business impact",
-                "Add GitHub portfolio",
-                "Include deployment links",
-                "Showcase Docker and AWS"
-            ]
-        }
+PHONE_REGEX = r"(\+?\d[\d\s\-]{8,15}\d)"
 
 
-provider = MockAIProvider()
+KNOWN_SKILLS = [
+    "Python",
+    "SQL",
+    "AWS",
+    "FastAPI",
+    "Docker",
+    "Git",
+    "Power BI",
+    "Tableau",
+    "Machine Learning",
+    "TensorFlow",
+    "PyTorch",
+    "LangChain",
+    "OpenAI",
+    "Azure",
+    "Pandas",
+    "NumPy",
+    "Spark",
+    "Airflow",
+    "Redshift",
+    "Snowflake"
+]
+
+
+def extract_name(text: str):
+
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+
+    if lines:
+        return lines[0]
+
+    return "Unknown"
+
+
+def extract_email(text: str):
+
+    match = re.search(EMAIL_REGEX, text)
+
+    if match:
+        return match.group()
+
+    return ""
+
+
+def extract_phone(text: str):
+
+    match = re.search(PHONE_REGEX, text)
+
+    if match:
+        return match.group()
+
+    return ""
+
+
+def extract_skills(text: str):
+
+    found = []
+
+    lower = text.lower()
+
+    for skill in KNOWN_SKILLS:
+
+        if skill.lower() in lower:
+            found.append(skill)
+
+    return sorted(list(set(found)))
 
 
 def analyze_resume(resume_text: str):
 
-    return provider.analyze_resume(resume_text)
+    candidate = Candidate(
+        name=extract_name(resume_text),
+        email=extract_email(resume_text),
+        phone=extract_phone(resume_text),
+        location=""
+    )
+
+    skills = extract_skills(resume_text)
+
+    ats = min(95, max(60, 60 + len(skills) * 3))
+
+    return ResumeAnalysis(
+
+        candidate=candidate,
+
+        skills=skills,
+
+        education=[],
+
+        experience=[],
+
+        certifications=[],
+
+        ats_score=ats,
+
+        summary=(
+            "Resume parsed successfully. "
+            "AI insights will be enhanced with LLM integration."
+        ),
+
+        strengths=[
+            "Resume successfully parsed",
+            "Recognized technical skills",
+            "Professional formatting"
+        ],
+
+        weaknesses=[
+            "Education parser not implemented",
+            "Experience parser not implemented"
+        ],
+
+        recommendations=[
+            "Add measurable achievements",
+            "Include project links",
+            "Add deployment links",
+            "Highlight AI experience"
+        ]
+    )
